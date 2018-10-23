@@ -42,19 +42,19 @@
          * 6: Display the battery as plain text
          * default: 2
          -->
-    <integer name="def_battery_style">2</integer>
+    <integer name="def_battery_style">5</integer>
 
     <!-- Default for LineageSettings.Secure.LOCKSCREEN_VISUALIZER_ENABLED -->
     <bool name="def_lockscreen_visualizer">true</bool>
 
     <!-- Default value of LineageSettings.System.ENABLE_FORWARD_LOOKUP -->
-    <integer name="def_forward_lookup">1</integer>
+    <integer name="def_forward_lookup">0</integer>
 
     <!-- Default value of LineageSettings.System.ENABLE_PEOPLE_LOOKUP -->
-    <integer name="def_people_lookup">1</integer>
+    <integer name="def_people_lookup">0</integer>
 
     <!-- Default value of LineageSettings.System.ENABLE_REVERSE_LOOKUP -->
-    <integer name="def_reverse_lookup">1</integer>
+    <integer name="def_reverse_lookup">0</integer>
 
     <!-- Defaults for Global -->
 
