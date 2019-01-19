@@ -62,7 +62,7 @@ public class ColorTemperatureController extends LiveDisplayFeature {
 
     private final LineageHardwareManager mHardware;
 
-    private static final long TWILIGHT_ADJUSTMENT_TIME = DateUtils.HOUR_IN_MILLIS * 1;
+    private static final long TWILIGHT_ADJUSTMENT_TIME = DateUtils.HOUR_IN_MILLIS / 2;
 
     private static final Uri DISPLAY_TEMPERATURE_DAY =
             LineageSettings.System.getUriFor(LineageSettings.System.DISPLAY_TEMPERATURE_DAY);
@@ -293,20 +293,23 @@ public class ColorTemperatureController extends LiveDisplayFeature {
      */
     private static float adj(long now, long sunset, long sunrise) {
         if (sunset < 0 || sunrise < 0
-                || now < sunset || now > (sunrise + TWILIGHT_ADJUSTMENT_TIME)) {
+                || now < (sunset - TWILIGHT_ADJUSTMENT_TIME)
+                || now > (sunrise + TWILIGHT_ADJUSTMENT_TIME)) {
+            // More than 0.5hr after civil sunrise or before civil sunset
             return 1.0f;
         }
 
-        if (now <= (sunset + TWILIGHT_ADJUSTMENT_TIME)) {
-            return MathUtils.lerp(1.0f, 0.0f,
-                    (float) (now - sunset) / TWILIGHT_ADJUSTMENT_TIME);
+        // Scale the transition into night mode in 0.5hr before civil sunset
+        if (now <= sunset) {
+            return (float) (sunset - now) / TWILIGHT_ADJUSTMENT_TIME;
         }
 
+        // Scale the transition into day mode in 0.5hr after civil sunrise
         if (now >= sunrise) {
-            return MathUtils.lerp(1.0f, 0.0f,
-                    (float) ((sunrise + TWILIGHT_ADJUSTMENT_TIME) - now) / TWILIGHT_ADJUSTMENT_TIME);
+            return (float) (now - sunrise) / TWILIGHT_ADJUSTMENT_TIME;
         }
 
+        // More than 0.5hr past civil sunset
         return 0.0f;
     }
 
