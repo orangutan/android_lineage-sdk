@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015-2016 The CyanogenMod Project
- *               2017-2018 The LineageOS Project
+ *               2017-2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.os.UserHandle;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.util.Range;
 
@@ -45,14 +44,11 @@ import org.lineageos.hardware.AutoContrast;
 import org.lineageos.hardware.ColorBalance;
 import org.lineageos.hardware.ColorEnhancement;
 import org.lineageos.hardware.DisplayColorCalibration;
-import org.lineageos.hardware.DisplayGammaCalibration;
 import org.lineageos.hardware.DisplayModeControl;
 import org.lineageos.hardware.HighTouchSensitivity;
 import org.lineageos.hardware.KeyDisabler;
-import org.lineageos.hardware.LongTermOrbits;
 import org.lineageos.hardware.PictureAdjustment;
 import org.lineageos.hardware.ReadingEnhancement;
-import org.lineageos.hardware.SerialNumber;
 import org.lineageos.hardware.SunlightEnhancement;
 import org.lineageos.hardware.TouchscreenGestures;
 import org.lineageos.hardware.TouchscreenHovering;
@@ -67,10 +63,6 @@ public class LineageHardwareService extends LineageSystemService {
     private final Context mContext;
     private final LineageHardwareInterface mLineageHwImpl;
 
-    private final ArrayMap<String, String> mDisplayModeMappings =
-            new ArrayMap<String, String>();
-    private final boolean mFilterDisplayModes;
-
     private interface LineageHardwareInterface {
         public int getSupportedFeatures();
         public boolean get(int feature);
@@ -79,18 +71,8 @@ public class LineageHardwareService extends LineageSystemService {
         public int[] getDisplayColorCalibration();
         public boolean setDisplayColorCalibration(int[] rgb);
 
-        public int getNumGammaControls();
-        public int[] getDisplayGammaCalibration(int idx);
-        public boolean setDisplayGammaCalibration(int idx, int[] rgb);
-
         public int[] getVibratorIntensity();
         public boolean setVibratorIntensity(int intensity);
-
-        public String getLtoSource();
-        public String getLtoDestination();
-        public long getLtoDownloadInterval();
-
-        public String getSerialNumber();
 
         public boolean requireAdaptiveBacklightForSunlightEnhancement();
         public boolean isSunlightEnhancementSelfManaged();
@@ -125,18 +107,12 @@ public class LineageHardwareService extends LineageSystemService {
                 mSupportedFeatures |= LineageHardwareManager.FEATURE_COLOR_ENHANCEMENT;
             if (DisplayColorCalibration.isSupported())
                 mSupportedFeatures |= LineageHardwareManager.FEATURE_DISPLAY_COLOR_CALIBRATION;
-            if (DisplayGammaCalibration.isSupported())
-                mSupportedFeatures |= LineageHardwareManager.FEATURE_DISPLAY_GAMMA_CALIBRATION;
             if (HighTouchSensitivity.isSupported())
                 mSupportedFeatures |= LineageHardwareManager.FEATURE_HIGH_TOUCH_SENSITIVITY;
             if (KeyDisabler.isSupported())
                 mSupportedFeatures |= LineageHardwareManager.FEATURE_KEY_DISABLE;
-            if (LongTermOrbits.isSupported())
-                mSupportedFeatures |= LineageHardwareManager.FEATURE_LONG_TERM_ORBITS;
             if (ReadingEnhancement.isSupported())
                 mSupportedFeatures |= LineageHardwareManager.FEATURE_READING_ENHANCEMENT;
-            if (SerialNumber.isSupported())
-                mSupportedFeatures |= LineageHardwareManager.FEATURE_SERIAL_NUMBER;
             if (SunlightEnhancement.isSupported())
                 mSupportedFeatures |= LineageHardwareManager.FEATURE_SUNLIGHT_ENHANCEMENT;
             if (VibratorHW.isSupported())
@@ -244,8 +220,6 @@ public class LineageHardwareService extends LineageSystemService {
             currentCalibration[LineageHardwareManager.COLOR_CALIBRATION_RED_INDEX] = rgb[0];
             currentCalibration[LineageHardwareManager.COLOR_CALIBRATION_GREEN_INDEX] = rgb[1];
             currentCalibration[LineageHardwareManager.COLOR_CALIBRATION_BLUE_INDEX] = rgb[2];
-            currentCalibration[LineageHardwareManager.COLOR_CALIBRATION_DEFAULT_INDEX] =
-                DisplayColorCalibration.getDefValue();
             currentCalibration[LineageHardwareManager.COLOR_CALIBRATION_MIN_INDEX] =
                 DisplayColorCalibration.getMinValue();
             currentCalibration[LineageHardwareManager.COLOR_CALIBRATION_MAX_INDEX] =
@@ -255,31 +229,6 @@ public class LineageHardwareService extends LineageSystemService {
 
         public boolean setDisplayColorCalibration(int[] rgb) {
             return DisplayColorCalibration.setColors(rgbToString(rgb));
-        }
-
-        public int getNumGammaControls() {
-            return DisplayGammaCalibration.getNumberOfControls();
-        }
-
-        public int[] getDisplayGammaCalibration(int idx) {
-            int[] rgb = splitStringToInt(DisplayGammaCalibration.getCurGamma(idx), " ");
-            if (rgb == null || rgb.length != 3) {
-                Log.e(TAG, "Invalid gamma calibration string");
-                return null;
-            }
-            int[] currentCalibration = new int[5];
-            currentCalibration[LineageHardwareManager.GAMMA_CALIBRATION_RED_INDEX] = rgb[0];
-            currentCalibration[LineageHardwareManager.GAMMA_CALIBRATION_GREEN_INDEX] = rgb[1];
-            currentCalibration[LineageHardwareManager.GAMMA_CALIBRATION_BLUE_INDEX] = rgb[2];
-            currentCalibration[LineageHardwareManager.GAMMA_CALIBRATION_MIN_INDEX] =
-                DisplayGammaCalibration.getMinValue(idx);
-            currentCalibration[LineageHardwareManager.GAMMA_CALIBRATION_MAX_INDEX] =
-                DisplayGammaCalibration.getMaxValue(idx);
-            return currentCalibration;
-        }
-
-        public boolean setDisplayGammaCalibration(int idx, int[] rgb) {
-            return DisplayGammaCalibration.setGamma(idx, rgbToString(rgb));
         }
 
         public int[] getVibratorIntensity() {
@@ -294,23 +243,6 @@ public class LineageHardwareService extends LineageSystemService {
 
         public boolean setVibratorIntensity(int intensity) {
             return VibratorHW.setIntensity(intensity);
-        }
-
-        public String getLtoSource() {
-            return LongTermOrbits.getSourceLocation();
-        }
-
-        public String getLtoDestination() {
-            File file = LongTermOrbits.getDestinationLocation();
-            return file.getAbsolutePath();
-        }
-
-        public long getLtoDownloadInterval() {
-            return LongTermOrbits.getDownloadInterval();
-        }
-
-        public String getSerialNumber() {
-            return SerialNumber.getSerialNumber();
         }
 
         public boolean requireAdaptiveBacklightForSunlightEnhancement() {
@@ -386,19 +318,6 @@ public class LineageHardwareService extends LineageSystemService {
         mContext = context;
         mLineageHwImpl = getImpl(context);
         publishBinderService(LineageContextConstants.LINEAGE_HARDWARE_SERVICE, mService);
-
-        final String[] mappings = mContext.getResources().getStringArray(
-                org.lineageos.platform.internal.R.array.config_displayModeMappings);
-        if (mappings != null && mappings.length > 0) {
-            for (String mapping : mappings) {
-                String[] split = mapping.split(":");
-                if (split.length == 2) {
-                    mDisplayModeMappings.put(split[0], split[1]);
-                }
-            }
-        }
-        mFilterDisplayModes = mContext.getResources().getBoolean(
-                org.lineageos.platform.internal.R.bool.config_filterDisplayModes);
     }
 
     @Override
@@ -418,19 +337,6 @@ public class LineageHardwareService extends LineageSystemService {
 
     @Override
     public void onStart() {
-    }
-
-    private DisplayMode remapDisplayMode(DisplayMode in) {
-        if (in == null) {
-            return null;
-        }
-        if (mDisplayModeMappings.containsKey(in.name)) {
-            return new DisplayMode(in.id, mDisplayModeMappings.get(in.name));
-        }
-        if (!mFilterDisplayModes) {
-            return in;
-        }
-        return null;
     }
 
     private final IBinder mService = new ILineageHardwareService.Stub() {
@@ -495,39 +401,6 @@ public class LineageHardwareService extends LineageSystemService {
         }
 
         @Override
-        public int getNumGammaControls() {
-            mContext.enforceCallingOrSelfPermission(
-                    lineageos.platform.Manifest.permission.HARDWARE_ABSTRACTION_ACCESS, null);
-            if (!isSupported(LineageHardwareManager.FEATURE_DISPLAY_GAMMA_CALIBRATION)) {
-                Log.e(TAG, "Display gamma calibration is not supported");
-                return 0;
-            }
-            return mLineageHwImpl.getNumGammaControls();
-        }
-
-        @Override
-        public int[] getDisplayGammaCalibration(int idx) {
-            mContext.enforceCallingOrSelfPermission(
-                    lineageos.platform.Manifest.permission.HARDWARE_ABSTRACTION_ACCESS, null);
-            if (!isSupported(LineageHardwareManager.FEATURE_DISPLAY_GAMMA_CALIBRATION)) {
-                Log.e(TAG, "Display gamma calibration is not supported");
-                return null;
-            }
-            return mLineageHwImpl.getDisplayGammaCalibration(idx);
-        }
-
-        @Override
-        public boolean setDisplayGammaCalibration(int idx, int[] rgb) {
-            mContext.enforceCallingOrSelfPermission(
-                    lineageos.platform.Manifest.permission.HARDWARE_ABSTRACTION_ACCESS, null);
-            if (!isSupported(LineageHardwareManager.FEATURE_DISPLAY_GAMMA_CALIBRATION)) {
-                Log.e(TAG, "Display gamma calibration is not supported");
-                return false;
-            }
-            return mLineageHwImpl.setDisplayGammaCalibration(idx, rgb);
-        }
-
-        @Override
         public int[] getVibratorIntensity() {
             mContext.enforceCallingOrSelfPermission(
                     lineageos.platform.Manifest.permission.HARDWARE_ABSTRACTION_ACCESS, null);
@@ -547,50 +420,6 @@ public class LineageHardwareService extends LineageSystemService {
                 return false;
             }
             return mLineageHwImpl.setVibratorIntensity(intensity);
-        }
-
-        @Override
-        public String getLtoSource() {
-            mContext.enforceCallingOrSelfPermission(
-                    lineageos.platform.Manifest.permission.HARDWARE_ABSTRACTION_ACCESS, null);
-            if (!isSupported(LineageHardwareManager.FEATURE_LONG_TERM_ORBITS)) {
-                Log.e(TAG, "Long term orbits is not supported");
-                return null;
-            }
-            return mLineageHwImpl.getLtoSource();
-        }
-
-        @Override
-        public String getLtoDestination() {
-            mContext.enforceCallingOrSelfPermission(
-                    lineageos.platform.Manifest.permission.HARDWARE_ABSTRACTION_ACCESS, null);
-            if (!isSupported(LineageHardwareManager.FEATURE_LONG_TERM_ORBITS)) {
-                Log.e(TAG, "Long term orbits is not supported");
-                return null;
-            }
-            return mLineageHwImpl.getLtoDestination();
-        }
-
-        @Override
-        public long getLtoDownloadInterval() {
-            mContext.enforceCallingOrSelfPermission(
-                    lineageos.platform.Manifest.permission.HARDWARE_ABSTRACTION_ACCESS, null);
-            if (!isSupported(LineageHardwareManager.FEATURE_LONG_TERM_ORBITS)) {
-                Log.e(TAG, "Long term orbits is not supported");
-                return 0;
-            }
-            return mLineageHwImpl.getLtoDownloadInterval();
-        }
-
-        @Override
-        public String getSerialNumber() {
-            mContext.enforceCallingOrSelfPermission(
-                    lineageos.platform.Manifest.permission.HARDWARE_ABSTRACTION_ACCESS, null);
-            if (!isSupported(LineageHardwareManager.FEATURE_SERIAL_NUMBER)) {
-                Log.e(TAG, "Serial number is not supported");
-                return null;
-            }
-            return mLineageHwImpl.getSerialNumber();
         }
 
         @Override
@@ -623,18 +452,7 @@ public class LineageHardwareService extends LineageSystemService {
                 Log.e(TAG, "Display modes are not supported");
                 return null;
             }
-            final DisplayMode[] modes = mLineageHwImpl.getDisplayModes();
-            if (modes == null) {
-                return null;
-            }
-            final ArrayList<DisplayMode> remapped = new ArrayList<DisplayMode>();
-            for (DisplayMode mode : modes) {
-                DisplayMode r = remapDisplayMode(mode);
-                if (r != null) {
-                    remapped.add(r);
-                }
-            }
-            return remapped.toArray(new DisplayMode[remapped.size()]);
+            return mLineageHwImpl.getDisplayModes();
         }
 
         @Override
@@ -645,7 +463,7 @@ public class LineageHardwareService extends LineageSystemService {
                 Log.e(TAG, "Display modes are not supported");
                 return null;
             }
-            return remapDisplayMode(mLineageHwImpl.getCurrentDisplayMode());
+            return mLineageHwImpl.getCurrentDisplayMode();
         }
 
         @Override
@@ -656,7 +474,7 @@ public class LineageHardwareService extends LineageSystemService {
                 Log.e(TAG, "Display modes are not supported");
                 return null;
             }
-            return remapDisplayMode(mLineageHwImpl.getDefaultDisplayMode());
+            return mLineageHwImpl.getDefaultDisplayMode();
         }
 
         @Override
