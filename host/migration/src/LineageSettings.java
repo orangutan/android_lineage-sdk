@@ -80,10 +80,8 @@ public final class LineageSettings {
         /**
          * Display style of the status bar battery information
          * 0: Display the battery an icon in portrait mode
-         * 2: Display the battery as a circle
-         * 4: Hide the battery status information
-         * 5: Display the battery an icon in landscape mode
-         * 6: Display the battery as plain text
+         * 1: Display the battery as a circle
+         * 2: Display the battery as plain text
          * default: 0
          * @hide
          */
@@ -129,13 +127,6 @@ public final class LineageSettings {
          * @hide
          */
         public static final String NAV_BUTTONS = "nav_buttons";
-
-        /**
-         * Volume key controls ringtone or media sound stream
-         * @hide
-         */
-        public static final String VOLUME_KEYS_CONTROL_RING_STREAM =
-                "volume_keys_control_ring_stream";
 
         /**
          * boolean value. toggles using arrow key locations on nav bar
@@ -723,7 +714,6 @@ public final class LineageSettings {
                 LineageSettings.System.STATUS_BAR_AM_PM,
                 LineageSettings.System.STATUS_BAR_BATTERY_STYLE,
                 LineageSettings.System.STATUS_BAR_SHOW_BATTERY_PERCENT,
-                LineageSettings.System.VOLUME_KEYS_CONTROL_RING_STREAM,
                 LineageSettings.System.NAVIGATION_BAR_MENU_ARROW_KEYS,
         };
 

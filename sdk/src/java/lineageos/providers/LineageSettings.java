@@ -923,17 +923,15 @@ public final class LineageSettings {
         /**
          * Display style of the status bar battery information
          * 0: Display the battery an icon in portrait mode
-         * 2: Display the battery as a circle
-         * 4: Hide the battery status information
-         * 5: Display the battery an icon in landscape mode
-         * 6: Display the battery as plain text
+         * 1: Display the battery as a circle
+         * 2: Display the battery as plain text
          * default: 0
          */
         public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
 
         /** @hide */
         public static final Validator STATUS_BAR_BATTERY_STYLE_VALIDATOR =
-                new DiscreteValueValidator(new String[] {"0", "2", "4", "5", "6"});
+                new InclusiveIntegerRangeValidator(0, 2);
 
         /**
          * Status bar battery %
@@ -994,16 +992,6 @@ public final class LineageSettings {
         public static final Validator NAV_BUTTONS_VALIDATOR =
                 new DelimitedListValidator(new String[] {"empty", "home", "back", "search",
                         "recent", "menu0", "menu1", "menu2", "dpad_left", "dpad_right"}, "|", true);
-
-        /**
-         * Volume key controls ringtone or media sound stream
-         */
-        public static final String VOLUME_KEYS_CONTROL_RING_STREAM =
-                "volume_keys_control_ring_stream";
-
-        /** @hide */
-        public static final Validator VOLUME_KEYS_CONTROL_RING_STREAM_VALIDATOR =
-                sBooleanValidator;
 
         /**
          * boolean value. toggles using arrow key locations on nav bar
@@ -2024,23 +2012,6 @@ public final class LineageSettings {
                 };
 
         /**
-         * Control the type of rotation which can be performed using the accelerometer
-         * if ACCELEROMETER_ROTATION is enabled.
-         * Value is a bitwise combination of
-         * 1 = 0 degrees (portrait)
-         * 2 = 90 degrees (left)
-         * 4 = 180 degrees (inverted portrait)
-         * 8 = 270 degrees (right)
-         * Setting to 0 is effectively orientation lock
-         * @hide
-         */
-        public static final String ACCELEROMETER_ROTATION_ANGLES = "accelerometer_rotation_angles";
-
-        /** @hide */
-        public static final Validator ACCELEROMETER_ROTATION_ANGLES_VALIDATOR =
-                sNonNegativeIntegerValidator;
-
-        /**
          * List of long-screen apps.
          */
         public static final String LONG_SCREEN_APPS = "long_screen_apps";
@@ -2160,12 +2131,10 @@ public final class LineageSettings {
                 LineageSettings.System.STATUS_BAR_AM_PM,
                 LineageSettings.System.STATUS_BAR_BATTERY_STYLE,
                 LineageSettings.System.STATUS_BAR_SHOW_BATTERY_PERCENT,
-                LineageSettings.System.VOLUME_KEYS_CONTROL_RING_STREAM,
                 LineageSettings.System.NAVIGATION_BAR_MENU_ARROW_KEYS,
                 LineageSettings.System.HEADSET_CONNECT_PLAYER,
                 LineageSettings.System.ZEN_ALLOW_LIGHTS,
                 LineageSettings.System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK,
-                LineageSettings.System.ACCELEROMETER_ROTATION_ANGLES,
         };
 
         /**
@@ -2216,8 +2185,6 @@ public final class LineageSettings {
             VALIDATORS.put(VOLUME_ADJUST_SOUNDS_ENABLED,
                     VOLUME_ADJUST_SOUNDS_ENABLED_VALIDATOR);
             VALIDATORS.put(NAV_BUTTONS, NAV_BUTTONS_VALIDATOR);
-            VALIDATORS.put(VOLUME_KEYS_CONTROL_RING_STREAM,
-                    VOLUME_KEYS_CONTROL_RING_STREAM_VALIDATOR);
             VALIDATORS.put(NAVIGATION_BAR_MENU_ARROW_KEYS,
                     NAVIGATION_BAR_MENU_ARROW_KEYS_VALIDATOR);
             VALIDATORS.put(KEY_HOME_LONG_PRESS_ACTION, KEY_HOME_LONG_PRESS_ACTION_VALIDATOR);
@@ -2343,8 +2310,6 @@ public final class LineageSettings {
                     TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK_VALIDATOR);
             VALIDATORS.put(DISPLAY_PICTURE_ADJUSTMENT,
                     DISPLAY_PICTURE_ADJUSTMENT_VALIDATOR);
-            VALIDATORS.put(ACCELEROMETER_ROTATION_ANGLES,
-                    ACCELEROMETER_ROTATION_ANGLES_VALIDATOR);
             VALIDATORS.put(LONG_SCREEN_APPS,
                     LONG_SCREEN_APPS_VALIDATOR);
             VALIDATORS.put(FORCE_SHOW_NAVBAR,
@@ -3112,6 +3077,16 @@ public final class LineageSettings {
         public static final Validator TRUST_WARNINGS_VALIDATOR =
                 new InclusiveIntegerRangeValidator(0, TrustInterface.TRUST_WARN_MAX_VALUE);
 
+        /**
+         * Whether volume panel should appear on the left (or right).
+         * 0 = false (on the right)
+         * 1 = true (on the left)
+         */
+        public static final String VOLUME_PANEL_ON_LEFT = "volume_panel_on_left";
+
+        public static final Validator VOLUME_PANEL_ON_LEFT_VALIDATOR =
+                sBooleanValidator;
+
         // endregion
 
         /**
@@ -3224,6 +3199,7 @@ public final class LineageSettings {
             VALIDATORS.put(TRUST_NOTIFICATIONS, TRUST_NOTIFICATIONS_VALIDATOR);
             VALIDATORS.put(TRUST_RESTRICT_USB_KEYGUARD, TRUST_RESTRICT_USB_KEYGUARD_VALIDATOR);
             VALIDATORS.put(TRUST_WARNINGS, TRUST_WARNINGS_VALIDATOR);
+            VALIDATORS.put(VOLUME_PANEL_ON_LEFT, VOLUME_PANEL_ON_LEFT_VALIDATOR);
         }
 
         /**
