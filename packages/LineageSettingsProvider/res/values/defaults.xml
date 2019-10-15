@@ -43,7 +43,7 @@
          * 6: Display the battery as plain text
          * default: 2
          -->
-    <integer name="def_battery_style">5</integer>
+    <integer name="def_battery_style">0</integer>
 
     <!-- Default for LineageSettings.Secure.LOCKSCREEN_VISUALIZER_ENABLED -->
     <bool name="def_lockscreen_visualizer">true</bool>
@@ -68,13 +68,13 @@
 
     <!-- Default for LineageSettings.Global.HEADS_UP_NOTIFICATIONS_ENABLED
          1==on -->
-    <integer name="def_heads_up_enabled">1</integer>
+    <integer name="def_heads_up_enabled">0</integer>
 
     <!-- Default for LineageSettings.Global.POWER_NOTIFICATIONS_ENABLED -->
     <bool name="def_power_notifications_enabled">true</bool>
 
     <!-- Default for LineageSettings.Global.POWER_NOTIFICATIONS_VIBRATE -->
-    <bool name="def_power_notifications_vibrate">false</bool>
+    <bool name="def_power_notifications_vibrate">true</bool>
 
     <!-- Default for LineageSettings.Global.POWER_NOTIFICATIONS_RINGTONE -->
     <string name="def_power_notifications_ringtone" translatable="false">/system/media/audio/ui/ChargingStarted.ogg</string>
@@ -119,6 +119,6 @@
          * 1: show the clock in the center
          * 2: show the clock in the left position (LTR)
     -->
-    <integer name="def_clock_position">2</integer>
+    <integer name="def_clock_position">0</integer>
 
 </resources>

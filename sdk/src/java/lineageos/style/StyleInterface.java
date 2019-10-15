@@ -189,14 +189,14 @@ public class StyleInterface {
      */
     public int getGlobalStyle() {
         if (sService == null) {
-            return STYLE_GLOBAL_AUTO_WALLPAPER;
+            return STYLE_GLOBAL_DARK;
         }
         try {
             return sService.getGlobalStyle();
         } catch (RemoteException e) {
             Log.e(TAG, e.getLocalizedMessage(), e);
         }
-        return STYLE_GLOBAL_AUTO_WALLPAPER;
+        return STYLE_GLOBAL_DARK;
     }
 
     /**
@@ -340,13 +340,13 @@ public class StyleInterface {
      */
     public String getDarkOverlay() {
         if (sService == null) {
-            return OVERLAY_DARK_DEFAULT;
+            return OVERLAY_DARK_BLACK;
         }
         try {
             return sService.getDarkOverlay();
         } catch (RemoteException e) {
             Log.e(TAG, e.getLocalizedMessage(), e);
         }
-        return OVERLAY_DARK_DEFAULT;
+        return OVERLAY_DARK_BLACK;
     }
 }
