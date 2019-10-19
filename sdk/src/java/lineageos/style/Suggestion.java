@@ -54,7 +54,7 @@ public class Suggestion implements Parcelable {
             globalStyle = parcel.readInt();
             selectedAccent = parcel.readInt();
         } else {
-            globalStyle = 1;
+            globalStyle = 0;
             selectedAccent = 0;
         }
 
