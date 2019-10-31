@@ -27,7 +27,7 @@ public class LineageLockPatternUtils extends LockPatternUtils {
     }
 
     public boolean shouldPassToSecurityView(int userId) {
-        return getBoolean(LineageSettings.Secure.LOCK_PASS_TO_SECURITY_VIEW, false, userId);
+        return getBoolean(LineageSettings.Secure.LOCK_PASS_TO_SECURITY_VIEW, true, userId);
     }
 
     public void setPassToSecurityView(boolean enabled, int userId) {
