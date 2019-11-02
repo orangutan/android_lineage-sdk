@@ -106,7 +106,7 @@ public class StyleInterfaceService extends LineageSystemService {
     private int getGlobalStyleInternal() {
         return LineageSettings.System.getInt(mContext.getContentResolver(),
                 LineageSettings.System.BERRY_GLOBAL_STYLE,
-                StyleInterface.STYLE_GLOBAL_AUTO_WALLPAPER);
+                StyleInterface.STYLE_GLOBAL_DARK);
     }
 
     private boolean setAccentInternal(String pkgName) {
@@ -197,7 +197,7 @@ public class StyleInterfaceService extends LineageSystemService {
         try {
             String currentDarkOverlay = LineageSettings.System.getString(
                     mContext.getContentResolver(), LineageSettings.System.BERRY_DARK_OVERLAY,
-                    StyleInterface.OVERLAY_DARK_DEFAULT);
+                    StyleInterface.OVERLAY_DARK_BLACK);
             if (isEnabled(currentDarkOverlay)) {
                 // Swich dark overlays
                 mOverlayService.setEnabled(currentDarkOverlay, false, userId);
@@ -212,7 +212,7 @@ public class StyleInterfaceService extends LineageSystemService {
 
     private String getDarkOverlayInternal() {
         return LineageSettings.System.getString(mContext.getContentResolver(),
-                LineageSettings.System.BERRY_DARK_OVERLAY, StyleInterface.OVERLAY_DARK_DEFAULT);
+                LineageSettings.System.BERRY_DARK_OVERLAY, StyleInterface.OVERLAY_DARK_BLACK);
     }
 
     /* Utils */
